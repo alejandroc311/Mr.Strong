@@ -11,26 +11,33 @@ import java.io.*;
 This is a custom Serialization utility class that will be solely used for storing the objects state(the workoutlog) into a file.
 */
 public class SerializationUtil{
-    public static Object deserialize(File filename) throws IOException, ClassNotFoundException{
-        FileInputStream fis = new FileInputStream(filename);
-        Object obj = new Object();
-        BufferedInputStream bis = new BufferedInputStream(fis);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        while(fis.available()>0){
-            obj = ois.readObject();
+    public static WorkoutLog deserialize(File filename) throws IOException, ClassNotFoundException{
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
+        WorkoutLog workoutLog = null;
+        try{
+            fis = new FileInputStream(filename);
+            ois = new ObjectInputStream(fis);
+            workoutLog = (WorkoutLog)ois.readObject();
+            ois.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return workoutLog;
+    }
+    public static void serialize(WorkoutLog workoutlog, File filename) throws IOException{
+        FileOutputStream fos = null;
 
+        ObjectOutputStream oos = null;
+        try{
+            fos = new FileOutputStream(filename);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(workoutlog);
+            oos.close();
+        }catch(Exception e){
+            e.printStackTrace();
         }
 
-        ois.close();
-        return obj;
-
-    }
-    public static void serialize(Object object, File filename) throws IOException{
-        FileOutputStream fos = new FileOutputStream(filename);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(object);
-        oos.close();
 
     }}
 

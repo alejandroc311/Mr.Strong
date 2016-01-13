@@ -55,7 +55,7 @@ public class Logger {
 
                     workoutLog = (WorkoutLog) SerializationUtil.deserialize(file);
                     System.out.println("Deserializing from:..." + file.getName());
-                    System.out.println(workoutLog.getWorkoutLog().keySet()+"");
+                    System.out.println(workoutLog.getWorkoutLog().keySet()+""+"\n");
 
 
                 } catch(EOFException e){
@@ -64,6 +64,8 @@ public class Logger {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
+                }catch(ClassCastException E){
+                    E.printStackTrace();
                 }
                 break;
 
@@ -73,11 +75,6 @@ public class Logger {
                 break;
 
         }
-
-
-
-
-        //System.out.println(workout.getExerciseList()+""+""+workout.getDate());
     }
 
 
@@ -247,16 +244,6 @@ public class Logger {
 
 
 
-  /*  protected static void serializeWorkout(WorkoutLog workoutLog){
-        try{
-            SerializationUtil.serialize(workoutLog, file);
-        }catch(IOException e){
-            System.out.println(e.getMessage());
-        }
-
-    }
-
-*/
 
 
 
