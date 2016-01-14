@@ -25,7 +25,7 @@ public class Logger {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Logger logger = new Logger();
-        WorkoutLog workoutLog = new WorkoutLog();
+        TreeMap<String, Workout> treemap = new TreeMap<String, Workout>();
         Workout workout = new Workout();
         File file = new File("workout.txt");
 
@@ -42,8 +42,8 @@ public class Logger {
 
                 }while(!checkIfUserIsDone());
 
-                workoutLog.getWorkoutLog().put(workout.getDate(),workout);
-                SerializationUtil.serialize(workoutLog,file);
+                treemap.put(workout.getDate(),workout);
+                SerializationUtil.serialize(treemap,file);
                 System.out.println("Workout saved in..." +file.getName());
 
                 break;
@@ -53,9 +53,9 @@ public class Logger {
 
                 try {
 
-                    workoutLog = (WorkoutLog) SerializationUtil.deserialize(file);
+                    treemap = (TreeMap<String,Workout>) SerializationUtil.deserialize(file);
                     System.out.println("Deserializing from:..." + file.getName());
-                    System.out.println(workoutLog.getWorkoutLog().keySet()+""+"\n");
+                    System.out.println(treemap.keySet()+""+"\n");
 
 
                 } catch(EOFException e){
