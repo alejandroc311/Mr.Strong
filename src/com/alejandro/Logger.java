@@ -41,10 +41,17 @@ public class Logger {
                     logger.promptForExerciseData(workout);
 
                 }while(!checkIfUserIsDone());
+                if(file.exists()){
+                    treemap = (TreeMap<String,Workout>) SerializationUtil.deserialize(file);
+                    treemap.put(workout.getDate(),workout);
+                    SerializationUtil.serialize(treemap,file);
+                    System.out.println("Workout saved in..." +file.getName());
+                }else{
+                    treemap.put(workout.getDate(),workout);
+                    SerializationUtil.serialize(treemap,file);
+                    System.out.println("Workout saved in..." +file.getName());
+                }
 
-                treemap.put(workout.getDate(),workout);
-                SerializationUtil.serialize(treemap,file);
-                System.out.println("Workout saved in..." +file.getName());
 
                 break;
 
