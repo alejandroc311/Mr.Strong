@@ -4,7 +4,6 @@ package com.alejandro.Utilities;
  * Created by Alejandro on 12/13/2015.
  */
 import com.alejandro.model.Workout;
-import com.alejandro.model.WorkoutLog;
 
 import java.io.*;
 import java.util.TreeMap;
