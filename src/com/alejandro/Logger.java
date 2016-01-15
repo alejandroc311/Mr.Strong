@@ -4,12 +4,12 @@ package com.alejandro;
 import com.alejandro.Utilities.SerializationUtil;
 import com.alejandro.model.Exercise;
 import com.alejandro.model.Workout;
-import com.alejandro.model.WorkoutLog;
-import com.sun.istack.internal.NotNull;
 
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -24,8 +24,9 @@ public class Logger {
 
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+        ArrayList<Workout> workoutArrayList = new ArrayList<Workout>();
         Logger logger = new Logger();
-        WorkoutLog workoutLog = new WorkoutLog();
+        TreeMap<String, Workout> treemap = new TreeMap<String, Workout>();
         Workout workout = new Workout();
         File file = new File("workout.txt");
 
@@ -41,11 +42,20 @@ public class Logger {
                     logger.promptForExerciseData(workout);
 
                 }while(!checkIfUserIsDone());
-
-                workoutLog.getWorkoutLog().put(workout.getDate(),workout);
-                SerializationUtil.serialize(workoutLog,file);
-                System.out.println("Workout saved in..." +file.getName());
-
+                //this will check if the file that holds all the data stored exists.
+                  //if the file does exists then the treemap recovers all the information in it so that any other information may be added
+                if(file.exists()){
+                    treemap = (TreeMap<String,Workout>) SerializationUtil.deserialize(file);
+                    treemap.put(workout.getDate(),workout);
+                    SerializationUtil.serialize(treemap,file);
+                    System.out.println("Workout saved in..." +file.getName());
+                }
+                //if it doesnt exist then it uses an empty treemap to start the storing of workouts
+                  else{
+                    treemap.put(workout.getDate(),workout);
+                    SerializationUtil.serialize(treemap,file);
+                    System.out.println("Workout saved in..." +file.getName());
+                }
                 break;
 
             case Logger.CHECK_KEY:
@@ -53,10 +63,8 @@ public class Logger {
 
                 try {
 
-                    workoutLog = (WorkoutLog) SerializationUtil.deserialize(file);
+                    treemap = (TreeMap<String,Workout>) SerializationUtil.deserialize(file);
                     System.out.println("Deserializing from:..." + file.getName());
-                    System.out.println(workoutLog.getWorkoutLog().keySet()+""+"\n");
-
 
                 } catch(EOFException e){
                     e.printStackTrace();
@@ -67,6 +75,15 @@ public class Logger {
                 }catch(ClassCastException E){
                     E.printStackTrace();
                 }
+                //add so that the user views a list of their workouts and can choose which to browse
+                //()showOrganizedWorkoutLog
+                printWorkoutList(treemap,workoutArrayList);
+
+                int temp = getUserChoiceofWorkout(treemap);
+
+                //()askforUaerInput
+                //()show workout
+                showWorkoutSelected(temp,workoutArrayList);
                 break;
 
 
@@ -77,9 +94,60 @@ public class Logger {
         }
     }
 
+//thid'll iterate through the treemap and show a list of all the workouts
+    //I have to move all of the workouts from the treemap to a arraylist
+    //since the user picks a number and the get() method of the treemap only takes keys and not indexes
+
+
+    protected static void printWorkoutList(TreeMap<String,Workout> treeMap, ArrayList<Workout> arrayList){
+
+            int i =0;
+            for(Map.Entry<String,Workout> entry: treeMap.entrySet()){
+                i++;
+                System.out.println(i+"-)"+entry.getKey()+"\n");
+                arrayList.add(entry.getValue());
+            }
 
 
 
+    }
+
+// the user picks the index of the workout he/she wants to view
+    //the index comes from the printqworkoutlist() method above
+
+    protected static int getUserChoiceofWorkout(TreeMap<String,Workout> treeMap){
+        Scanner scanner = new Scanner(System.in);
+
+        int userinput;
+        do{System.out.println("Please enter a number to see a workout");
+            try{
+            userinput = Integer.parseInt(scanner.nextLine());
+            }
+            catch(NumberFormatException e){
+                userinput = 0;
+            }
+            if(userinput<0||userinput>treeMap.size()){
+                userinput = 0;
+            }
+        }
+        while(userinput==0);
+
+
+        return userinput;
+
+    }
+
+// this method takes the user choice and finds the index from the arraylist and shows the entry
+    protected static void showWorkoutSelected(int choice, ArrayList<Workout> arrayList){
+        //the list shows the index starting at 1 instead of 0, so ineed to subtract a number to get the number correctly
+        int temp;
+        temp = choice - 1;
+        for(Exercise exercise: arrayList.get(temp).getExerciseList()){
+            System.out.println(exercise.getExerciseIdentity()+" : "+exercise.getWeightUsed()+" x "
+                + exercise.getNumOfReps() + " x " +exercise.getNumOfSets()
+            );
+        }
+    }
 
     //I'm using this method to explain to the user how to use the program
     protected static void printInstructions(){
@@ -178,7 +246,7 @@ public class Logger {
 
 
 
-        //this is the part that aks for numbers
+    //this is the part that asks for numbers
 
 
 
