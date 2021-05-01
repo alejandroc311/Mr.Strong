@@ -1,5 +1,0 @@
-<root>
-  <item name='java.util.TreeMap java.util.Set&lt;K&gt; keySet()'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-</root>
